@@ -4,19 +4,25 @@ const BOOK_ITEMID = "bookId";
 
 function addBookshelf() {
     const uncompletedBooklist = document.getElementById(UNCOMPLETED_LIST_BOOK_ID);
+    const listCompleted = document.getElementById(COMPLETED_LIST_BOOK_ID);
 
     const textBooktitle = document.getElementById("inputBookTitle").value;
     const textBookauthor = document.getElementById("inputBookAuthor").value;
     const textBookyear = document.getElementById("inputBookYear").value;
+    const isCompleted = document.getElementById("inputBookIsComplete").checked;
+
+    const bookShelf = makeBookshelf(textBooktitle, textBookauthor, textBookyear, isCompleted);
+    const bookObject = composeBookObject(textBooktitle, textBookauthor, textBookyear, isCompleted);
     
-    const bookShelf = makeBookshelf(textBooktitle, textBookauthor, textBookyear);
-
-    const bookObject = composeBookObject(textBooktitle, textBookauthor, textBookyear, false);
-
     bookShelf[BOOK_ITEMID] = bookObject.id;
     incompleteBookshelfList.push(bookObject);
 
-    uncompletedBooklist.append(bookShelf);
+    if (isCompleted) {
+        listCompleted.append(bookShelf);
+    } else {
+        uncompletedBooklist.append(bookShelf);
+    }
+
     updateDataToStorage();
 }
 
@@ -72,9 +78,9 @@ function addBookToCompleted(bookElement){
     const bookYear = bookElement.querySelector(".book_item > .years").innerText;
 
     const newBookshelf = makeBookshelf(bookTitle, bookAuthor, bookYear, true);
-    const book = findBookshelf(bookElement[BOOK_ITEMID]);
-    book.isCompleted = true;
-    newBookshelf[BOOK_ITEMID] = book.id;
+    const bookshelf = findBookshelf(bookElement[BOOK_ITEMID]);
+    bookshelf.isCompleted = true;
+    newBookshelf[BOOK_ITEMID] = bookshelf.id;
 
 
     listCompleted.append(newBookshelf);
@@ -112,9 +118,9 @@ function undoBookfromCompleted(bookElement){
 
     const newBookshelf = makeBookshelf(bookTitle, bookAuthor, bookYear, false)
     
-    const book = findBookshelf(bookElement[BOOK_ITEMID]);
-    book.isCompleted = false;
-    newBookshelf[BOOK_ITEMID] = book.id;
+    const bookshelf = findBookshelf(bookElement[BOOK_ITEMID]);
+    bookshelf.isCompleted = false;
+    newBookshelf[BOOK_ITEMID] = bookshelf.id;
 
 
     listUncompleted.append(newBookshelf);
@@ -127,3 +133,84 @@ function createUndoButton() {
         undoBookfromCompleted(event.target.parentElement.parentElement);
     });
 }
+
+
+const searchBook = document.getElementById("searchSubmit");
+searchBook.addEventListener("click", (event) => {
+    const searchBook1 = document.getElementById("searchBookTitle").value.toLowerCase;
+    const searchBook2 = document.querySelectorAll("article");
+    event.preventDefault();
+
+    for (bookshelf of searchBook2) {
+        const bookTitle = bookshelf.firstElementChild.textContent.toLowerCase();
+        
+        if(bookTitle.indexOf(searchBook1) != -1) {
+            bookshelf.style.display = "block";
+            console.log(bookTitle);
+        } else {
+            bookshelf.style.display = "none";
+        }
+    }
+});
+
+
+
+/*
+
+
+"searchBookTitle").value;
+function searchBook(){
+    const searchButton = document.getElementById("searchBookTitle").value;
+    const elementArticle = document.querySelectorAll('article');
+    for (title of elementArticle)( {
+        if (title.childNodes[0].innerText.toLowerCase().includes(searchTitle.toLowerCase())) {
+            title.setAttribute("style", "display : block;");
+                } else {
+            title.setAttribute("style", "display: none;");        
+        }
+    }
+}
+
+function searchBook(){
+    const searchForm = document.getElementById("searchBook");
+    textInput = document.getElementById("searchBookTitle");
+    const bookTitle =document.getElementById("book_item");
+    const books = document.querySelectorAll("h3");
+    console.log(h3);
+    for (let i=0; i<h3.length; i++){
+        const ahref = document.querySelectorAll("a")[i];
+    }
+
+}
+
+<1. Ambil nilai dari input judul buku yang ingin dicari
+
+    const searchButton = document.getElementById("searchBookTitle").value;
+
+2. Ambil element pembungkus element judul yaitu article
+
+    const elementArticle = document.querySelectorAll('article');
+
+3. Lakukan perulangan pada variabel elementArticle dengan for of
+
+    for (title of elementArticle) {
+
+4. Buat perbandingan apakah nilai title sama dengan nilai input search, 
+saat pengecekan ambil nilai judul dengan childNodes[0].innerText, karna kita ingin mengambil nilai h3. 
+
+5. Rubah teks dari h3 ke kecil semua dengan .toLowerCase()
+
+6. Gunakan method .includes() dengan parameter nilai yang diambil 
+dari variabel searchButton yang juga sudah di rubah ke kecil semua.
+
+    if (title.childNodes[0].innerText.toLowerCase().includes(searchTitle.toLowerCase())) {
+
+7. Jika bernilai true, set attribut style pada element article dengan nilai display: block, jika false set attribut style menjadi display: none;
+
+           title.setAttribute("style", "display : block;");
+
+            } else {
+
+            title.setAttribute("style", "display: none;");        
+
+        }*/
